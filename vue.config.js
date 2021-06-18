@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 module.exports = {
   configureWebpack: {
     resolve: {
@@ -8,8 +8,9 @@ module.exports = {
         utils: '@/utils',
         store: '@/store',
         router: '@/router',
-        views: '@/views'
+        views: '@/views',
+        assets: '@/assets'
       }
     }
   }
-}
+};

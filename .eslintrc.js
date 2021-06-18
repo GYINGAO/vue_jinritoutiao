@@ -1,11 +1,11 @@
 module.exports = {
   root: true,
   env: {
-    node: true,
+    node: true
   },
   extends: ['plugin:vue/essential', '@vue/standard'],
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: 'babel-eslint'
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -26,7 +26,6 @@ module.exports = {
     'no-use-before-define': [1, 'nofunc'], // 未定义前不能使用
     complexity: [1, 10], // 循环复杂度
     'no-unused-vars': 1, // 不能有声明后未被使用的变量或参数
-
 
     // 错误
     'comma-dangle': [2, 'never'], // 对象字面量项尾不能有逗号
@@ -54,8 +53,8 @@ module.exports = {
       {
         // 对象字面量中冒号的前后空格
         beforeColon: false,
-        afterColon: true,
-      },
+        afterColon: true
+      }
     ],
     'block-scoped-var': 2, // 块语句中使用var
     'consistent-return': 2, // return 后面是否允许省略
@@ -75,41 +74,33 @@ module.exports = {
       2,
       {
         // 禁止重复声明变量
-        builtinGlobals: true,
-      },
+        builtinGlobals: true
+      }
     ],
     'no-unused-expressions': [
       2,
       {
         // 禁止无用的表达式
         allowShortCircuit: true,
-        allowTernary: true,
-      },
+        allowTernary: true
+      }
     ],
     'no-useless-call': 2, // 禁止不必要的call和apply
     'no-useless-concat': 2,
     'no-void': 2, // 禁用void操作符
     'no-with': 2, // 禁用with
     'space-infix-ops': 2, // 中缀操作符周围要不要有空格
-    'valid-jsdoc': [
-      2,
-      {
-        // jsdoc规则
-        requireParamDescription: true,
-        requireReturnDescription: true,
-      },
-    ],
     'no-warning-comments': [
       2,
       {
         // 不能有警告备注
         terms: ['todo', 'fixme', 'any other term'],
-        location: 'anywhere',
-      },
+        location: 'anywhere'
+      }
     ],
     curly: 1, // 必须使用 if(){} 中的{}
 
     // common js
-    'no-duplicate-imports': 1,
-  },
+    'no-duplicate-imports': 1
+  }
 };
