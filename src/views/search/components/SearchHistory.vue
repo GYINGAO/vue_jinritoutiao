@@ -5,7 +5,7 @@
         <template #right-icon>
           <van-icon v-if="!isDeleting" name="delete-o" @click="isDeleting = true" />
           <div class="delete-wrap" v-else>
-            <span @click="deleteAll">全部删除</span>
+            <span @click="$emit('delete-all')" v-if="history.length !== 0">全部删除</span>
             <span @click="isDeleting = false">完成</span>
           </div>
         </template>
@@ -15,16 +15,17 @@
         v-for="(item, index) in history"
         :key="index"
         :title="item"
-        @click="$emit('history-search', item)"
+        @click="onSearch(item)"
       >
         <template v-if="isDeleting" #right-icon>
-          <van-icon name="close" @click="history.splice(index, 1)" />
+          <van-icon name="close" @click.stop="deleteOne(index)" />
         </template>
       </van-cell>
     </van-cell-group>
   </div>
 </template>
 <script>
+import { setItem } from 'utils/storage';
 export default {
   name: '',
   props: {
@@ -39,8 +40,14 @@ export default {
     };
   },
   methods: {
-    deleteAll() {
-      this.$emit('deleteAll');
+    onSearch(item) {
+      if (!this.isDeleting) {
+        this.$emit('history-search', item);
+      }
+    },
+    deleteOne(index) {
+      this.history.splice(index, 1);
+      setItem('my-history', this.history);
     }
   }
 };

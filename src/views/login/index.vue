@@ -134,7 +134,8 @@ export default {
         const res = await login(this.user);
         this.$store.commit('setUser', res.data);
         this.$toast.success('登录成功');
-        this.$router.back();
+        this.$store.commit('removeCachePage', 'Layout');
+        this.$router.push(this.$route.query.redirect || '/');
       } catch (err) {
         console.log(err);
         this.$toast.fail('手机号或验证码错误');

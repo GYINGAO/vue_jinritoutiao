@@ -7,13 +7,10 @@
 </template>
 <script>
 import { getSearchResult } from 'api/search';
+import { setItem } from 'utils/storage';
 export default {
   name: 'SearchResult',
   props: {
-    results: {
-      type: Array,
-      required: true
-    },
     searchText: {
       type: String,
       required: true
@@ -23,20 +20,28 @@ export default {
     return {
       loading: false,
       finished: false,
-      page: 1
+      results: [],
+      page: 1,
+      per_page: 15
     };
   },
   methods: {
     async onLoad() {
-      this.page++;
-      const res = await getSearchResult({
+      this.searchText = this.searchText.trim();
+      if (this.searchText === '') {
+        this.results = [];
+        this.searchText = '';
+        return;
+      }
+      const { data } = await getSearchResult({
         page: this.page,
-        per_page: 15,
+        per_page: this.per_page,
         q: this.searchText.trim()
       });
-      this.results.push(...res.data.results);
-      if (res.data.results.length) {
-        this.loading = false;
+      this.results.push(...data.results);
+      this.loading = false;
+      if (data.results.length) {
+        this.page++;
       } else {
         this.finished = true;
       }

@@ -73,3 +73,20 @@ export const editPhoto = data => {
     data
   });
 };
+// 关注用户
+export const addFollow = id => {
+  return request({
+    method: 'post',
+    url: '/app/v1_0/user/followings',
+    data: {
+      target: id
+    }
+  });
+};
+// 取消关注用户
+export const deleteFollow = id => {
+  return request({
+    method: 'delete',
+    url: '/app/v1_0/user/followings/' + id
+  });
+};

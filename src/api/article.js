@@ -23,3 +23,44 @@ export const getArticleList = params => {
     params
   });
 };
+// 获取新闻文章详情
+export const getArticleById = id => {
+  return request({
+    method: 'get',
+    url: '/app/v1_0/articles/' + id
+  });
+};
+// 收藏文章
+export const addCollectionById = id => {
+  return request({
+    method: 'post',
+    url: '/app/v1_0/article/collections',
+    data: {
+      target: id
+    }
+  });
+};
+// 取消收藏文章
+export const deleteCollectionById = id => {
+  return request({
+    method: 'delete',
+    url: '/app/v1_0/article/collections/' + id
+  });
+};
+// 对文章点赞
+export const addLikingById = id => {
+  return request({
+    method: 'post',
+    url: '/app/v1_0/article/likings',
+    data: {
+      target: id
+    }
+  });
+};
+// 取消对文章点赞
+export const deleteLikingById = id => {
+  return request({
+    method: 'delete',
+    url: '/app/v1_0/article/likings/' + id
+  });
+};

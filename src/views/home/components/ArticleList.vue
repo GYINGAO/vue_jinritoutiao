@@ -1,5 +1,5 @@
 <template>
-  <div class="article-list">
+  <div class="article-list" ref="list">
     <van-pull-refresh
       v-model="refreshing"
       success-duration="1000"
@@ -22,6 +22,7 @@
 <script>
 import { getArticleList } from 'api/article';
 import ArticleListItem from 'components/ArticleListItem';
+import { debounce } from 'lodash';
 export default {
   name: 'ArticleList',
   props: {
@@ -38,7 +39,8 @@ export default {
       finished: false,
       error: false,
       refreshing: false,
-      refreshSuccessText: ''
+      refreshSuccessText: '',
+      scrollTop: 0
     };
   },
   methods: {
@@ -77,7 +79,19 @@ export default {
       }
     }
   },
-  components: { ArticleListItem }
+  components: { ArticleListItem },
+  mounted() {
+    const list = this.$refs.list;
+    list.onscroll = debounce(() => {
+      this.scrollTop = list.scrollTop;
+    }, 50);
+  },
+  // 组件被缓存时，下面两个生命周期函数会被执行
+  activated() {
+    // 重新设置滚动距离
+    this.$refs.list.scrollTop = this.scrollTop;
+  },
+  deactivated() {}
 };
 </script>
 <style scoped lang="less">

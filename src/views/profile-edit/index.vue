@@ -8,20 +8,15 @@
       @click-right="onSave"
     />
     <van-cell-group>
-      <van-cell title="头像" is-link>
-        <van-loading
-          class="loading"
-          size="0.45rem"
-          slot="default"
-          type="spinner"
-          color="#3296fa"
-          v-if="isLoading"
-        >
-          上传中...
-        </van-loading>
-        <van-uploader slot="default" :after-read="afterRead" accept="image/*" v-else>
-          <van-image class="avatar" :src="userInfo.photo || require('./avatar.png')" />
-        </van-uploader>
+      <input type="file" hidden ref="avatar" accept="image/*" @change="onFileChange" />
+      <van-cell title="头像" is-link center>
+        <van-image
+          class="avatar"
+          round
+          fit="cover"
+          :src="userInfo.photo || require('./avatar.png')"
+          @click="$refs.avatar.click()"
+        />
       </van-cell>
       <van-cell title="昵称" :value="userInfo.name" is-link @click="showName = true" />
       <van-cell title="介绍" is-link @click="showIntro = true" />
@@ -55,7 +50,7 @@
           center
           @click="
             showGender = false;
-            userInfo.gender = '男';
+            userInfo.gender = 0;
           "
         >
           <span slot="title">男</span>
@@ -65,7 +60,7 @@
           center
           @click="
             showGender = false;
-            userInfo.gender = '女';
+            userInfo.gender = 1;
           "
         >
           <span slot="title">女</span>
@@ -137,13 +132,29 @@
         >确认</van-button
       >
     </van-popup>
+
+    <!-- 裁剪头像 -->
+    <van-popup
+      class="avatar-popup"
+      v-model="showAvatar"
+      style="height:100%;width:100%"
+      position="bottom"
+    >
+      <update-avatar
+        v-if="showAvatar"
+        :file="previewImg"
+        @close="onAvatarClose"
+        @update="userInfo.photo = $event"
+      ></update-avatar>
+    </van-popup>
   </div>
 </template>
 <script>
 import { readLocalData } from 'api/local';
-import { getProfile, getUserInfo, editPhoto, editProfile } from 'api/user';
+import { getProfile, getUserInfo, editProfile } from 'api/user';
+import UpdateAvatar from './components/UpdateAvatar.vue';
 export default {
-  name: '',
+  name: 'ProfileEdit',
   data() {
     return {
       userInfo: {
@@ -155,6 +166,7 @@ export default {
       showLocation: false,
       showIntro: false,
       showName: false,
+      showAvatar: false,
       minDate: new Date(1921, 0, 1),
       maxDate: new Date(),
       currentDate: new Date(),
@@ -164,19 +176,42 @@ export default {
         value: 'code',
         children: 'child'
       },
-      isLoading: false
+      isLoading: false,
+      previewImg: ''
     };
   },
   methods: {
+    onAvatarClose() {
+      this.showAvatar = false;
+    },
+    onFileChange() {
+      // const blob = window.URL.createObjectURL(this.$refs.avatar.files[0]);
+      // this.previewImg = blob;
+      this.previewImg = this.$refs.avatar.files[0];
+      this.showAvatar = true;
+      // 清空file,解决相同文件不处罚change事件
+      this.$refs.avatar.value = '';
+    },
     async onSave() {
-      const res = await editProfile({
-        name: this.userInfo.name,
-        gender: this.userInfo.gender,
-        birthday: this.userInfo.birthday,
-        intro: this.userInfo.intro
+      this.$toast.loading({
+        message: '保存中...',
+        forbidClick: true,
+        duration: 0
       });
-      console.log(res);
-      this.$router.back();
+      try {
+        const res = await editProfile({
+          name: this.userInfo.name,
+          gender: this.userInfo.gender,
+          birthday: this.userInfo.birthday,
+          intro: this.userInfo.intro
+        });
+        console.log(res);
+        this.$toast.success('保存成功');
+        this.$router.back();
+      } catch (error) {
+        console.log(error);
+        this.$toast.fail('保存失败');
+      }
     },
     formatterDate(type, val) {
       if (type === 'year') {
@@ -208,20 +243,6 @@ export default {
           console.log(err);
         });
     },
-    async afterRead(file) {
-      this.isLoading = true;
-      try {
-        this.userInfo.base64 = file.content;
-        const formData = new FormData();
-        formData.append('photo', file.file);
-        const res = await editPhoto(formData);
-        this.userInfo.photo = res.data.photo;
-      } catch (error) {
-        console.log(error);
-        this.$toast('修改失败');
-      }
-      this.isLoading = false;
-    },
     async getUserInfo() {
       try {
         const res = await getProfile();
@@ -232,7 +253,7 @@ export default {
       }
     }
   },
-  components: {},
+  components: { UpdateAvatar },
   created() {
     this.getCityData();
     this.getUserInfo();
@@ -249,8 +270,9 @@ export default {
 </script>
 <style scoped lang="less">
 .avatar {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
 }
 .group-two {
   margin-top: 6px;
@@ -313,5 +335,8 @@ export default {
     background-color: #1989fa;
     color: #fff;
   }
+}
+.avatar-popup {
+  background-color: #000;
 }
 </style>

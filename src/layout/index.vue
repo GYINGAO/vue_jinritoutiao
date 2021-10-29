@@ -1,6 +1,8 @@
 <template>
   <div>
-    <router-view></router-view>
+    <keep-alive :exclude="['ProfileEdit', 'Chat']">
+      <router-view></router-view>
+    </keep-alive>
     <van-tabbar v-model="active" route>
       <van-tabbar-item name="home" icon="home-o" to="/home">首页</van-tabbar-item>
       <van-tabbar-item name="qa" icon="comment-o" to="/qa">问答</van-tabbar-item>
@@ -11,14 +13,17 @@
 </template>
 <script>
 export default {
-  name: '',
+  name: 'Layout',
   data() {
     return {
       active: 'home'
     };
   },
   methods: {},
-  components: {}
+  components: {},
+  mounted() {
+    this.$store.commit('addCachePage', 'Layout');
+  }
 };
 </script>
 <style scoped lang="less"></style>

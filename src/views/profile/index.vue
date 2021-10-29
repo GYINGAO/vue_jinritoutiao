@@ -7,7 +7,7 @@
             class="avatar"
             slot="icon"
             round
-            :src="userInfo.photo || require('./edit/avatar.png')"
+            :src="userInfo.photo || require('../profile-edit/avatar.png')"
             fit="cover"
             @click="previewAvatar"
           />
@@ -48,7 +48,11 @@
           </van-grid-item>
         </van-grid>
       </div>
-      <div class="logout" v-else @click="$router.push('/login')">
+      <div
+        class="logout"
+        v-else
+        @click="$router.push({ name: 'login', query: { redirect: '/profile' } })"
+      >
         <van-image class="image" round :src="require('./avatar.png')" fit="cover" />
         <div class="text">登录 / 注册</div>
       </div>
@@ -65,7 +69,7 @@
     </van-grid>
     <van-cell-group>
       <van-cell title="消息通知" is-link />
-      <van-cell title="小智同学" is-link />
+      <van-cell title="小智同学" is-link to="/chat" />
     </van-cell-group>
     <van-button class="btn-logout" block color="#d86262" plain v-if="user" @click="onLogout"
       >退出登录</van-button
@@ -87,7 +91,7 @@ export default {
   methods: {
     previewAvatar() {
       ImagePreview({
-        images: [this.userInfo.photo || require('./edit/avatar.png')],
+        images: [this.userInfo.photo || require('../profile-edit/avatar.png')],
         closeable: true
       });
     },
